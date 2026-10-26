@@ -1,110 +1,148 @@
-# BuildSense AI — Multimodal Construction Intelligence Platform
+# 🏗️ AI-Powered Multimodal Construction Intelligence Platform
 
-A full-stack decision-support workspace for construction teams. It reads site photos,
-daily logs, property attributes, and project briefs, then returns structured safety,
-defect, valuation, schedule, and knowledge outputs.
+An AI-driven, full-stack construction intelligence platform that combines computer vision, natural language processing, and project data analysis to support construction planning, site safety, defect assessment, and informed decision-making.
 
-- **Frontend:** React 18 + TypeScript + Vite
-- **Backend:** FastAPI + Pydantic v2
-- **AI:** Google Gemini (multimodal) with a deterministic offline demo engine
-- **Contract:** every response is schema-validated and includes a `meta` telemetry block
+## 📌 Overview
 
-## Feature set
+The **Multimodal Construction Intelligence Platform** enables construction professionals to interact with AI using text, images, and structured project information. It integrates a React.js frontend with a FastAPI backend and a multimodal Large Language Model (LLM) to deliver context-aware insights through structured JSON responses.
 
-| Workspace | Input | Output |
-| --- | --- | --- |
-| Site Safety Monitor | image + notes | hazards, PPE status, compliance score, corrective actions |
-| Crack Detection | image + notes | crack type, severity, dimensions, cause, repair options, cost range |
-| Real Estate Valuation | structured attributes | value range, price/m², factor weights, market outlook |
-| Project Planning | project brief | phases, tasks, dependencies, milestones, critical path, resources, budget, risks |
-| Daily Site Assistant | raw site log | executive summary, issues, owned actions, safety notes, next-day focus |
-| Weather Advisory | location + activities | estimated outlook, activity suitability, advisories, schedule impact |
-| Knowledge Assistant | question + optional image | answer, key points, applicable codes, safety notes, disclaimer |
+The platform aims to simplify construction workflows, improve access to technical knowledge, and assist professionals in identifying potential risks and planning construction activities.
 
-## Architecture
+## ✨ Key Features
 
-```
-React + Vite (port 5173)
-        │  typed fetch · /api proxy
-        ▼
-FastAPI (port 8000)
-        │
-        ├── Pydantic request/response contracts
-        ├── upload validation (PNG/JPEG/WebP, 8 MB)
-        ├── AI service
-        │      ├── Gemini provider (response_mime_type=application/json)
-        │      ├── schema validation + one corrective retry
-        │      └── deterministic mock fallback (auto mode)
-        └── ResponseMeta (source, model, latency, warnings)
-```
+- **Construction Site Safety Monitoring:** Analyze site images to identify potential hazards and unsafe working conditions.
+- **Crack Detection and Analysis:** Examine visible cracks in construction images and provide preliminary observations about their characteristics and possible severity.
+- **Real Estate Valuation:** Generate estimated property valuations using available property details and relevant market information.
+- **Construction Project Planning:** Assist with project schedules, material planning, resource allocation, and execution strategies.
+- **Daily Site Assistance:** Provide guidance for routine construction activities, inspections, and site management.
+- **Weather-Aware Advisory:** Generate weather-informed construction recommendations when reliable weather data is available.
+- **Construction Knowledge Assistant:** Answer construction-related questions using natural language.
+- **Structured AI Responses:** Use JSON-based response contracts to support predictable frontend-backend communication.
 
-The backend never returns unvalidated model output. Generated JSON is stripped of
-markdown fences, validated against the endpoint's Pydantic model, and retried once with
-the validation error if needed. In `auto` mode, a provider failure can fall back to demo
-data with an explicit warning, so the UI remains usable.
+## 🛠️ Technology Stack
 
-## Repository layout
+| Component | Technology |
+|---|---|
+| Frontend | React.js |
+| Backend | Python, FastAPI |
+| AI Integration | Multimodal Large Language Model |
+| Communication | REST APIs, JSON |
+| Image Processing | Image handling and model-based visual analysis |
+| Development Tools | Git, GitHub, npm, Python |
 
-```
-backend/
-  app/
-    ai/          provider wrapper, prompts, retry/validation service
-    routers/     one router per feature + health/features metadata
-    schemas/     strict request/response contracts
-    services/    image validation, deterministic demo engine
-  tests/         smoke tests for all seven contracts
-  requirements.txt
-  .env.example
-frontend/
-  src/
-    api/         typed API client
-    components/  layout and UI primitives
-    lib/         formatting and async-action helpers
-    pages/       dashboard + seven workspaces
-    types.ts     TypeScript mirror of backend contracts
-  vite.config.ts
+*Adjust this list to reflect the libraries, AI provider, database, and services actually used in your implementation.*
+
+## 🏛️ System Architecture
+
+```text
+          User
+           |
+           v
+    React.js Frontend
+           |
+           | REST API / JSON
+           v
+      FastAPI Backend
+           |
+     Input Validation
+           |
+           v
+   Multimodal AI Model
+      /     |      \
+   Text   Images   Project Data
+           |
+           v
+   Structured AI Response
+           |
+           v
+    React.js Frontend
+           |
+           v
+   Insights and Recommendations
 ```
 
-## Quick start
+## 🚀 Getting Started
 
-Requires **Python 3.11+** and **Node 20+**.
+### Prerequisites
 
-### 1. Backend
+Install the following before running the application:
 
-```powershell
+- Node.js and npm
+- Python 3.10 or a version compatible with your dependencies
+- pip
+- Git
+- An API key for the selected AI provider, if required
+
+### 1. Clone the Repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd <YOUR_PROJECT_DIRECTORY>
+```
+
+### 2. Configure the Backend
+
+Navigate to the backend directory:
+
+```bash
 cd backend
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+python -m venv venv
+```
+
+Activate the virtual environment.
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**Linux/macOS:**
+
+```bash
+source venv/bin/activate
+```
+
+Install the dependencies:
+
+```bash
 pip install -r requirements.txt
-Copy-Item .env.example .env
 ```
 
-The app runs immediately in demo mode with no API key. For live Gemini analysis, edit
-`backend/.env`:
+Create a `.env` file in the backend directory and configure the environment variables required by your AI provider.
 
-```dotenv
-AI_MODE=auto
-GEMINI_API_KEY=your-key-here
-GEMINI_MODEL=gemini-2.5-flash
+Example:
+
+```env
+AI_API_KEY=your_api_key_here
 ```
 
-Start the API:
+Use the actual variable names expected by your application. Never commit API keys or other secrets to GitHub.
 
-```powershell
-uvicorn app.main:app --reload --port 8000
+Start the FastAPI server:
+
+```bash
+uvicorn main:app --reload
 ```
 
-- API docs: <http://127.0.0.1:8000/docs>
-- Health: <http://127.0.0.1:8000/api/health>
+This command assumes your FastAPI application instance is named `app` in `main.py`. Adjust the module path if your project uses a different entry point.
 
-### 2. Frontend
+Access the API documentation at:
 
-```powershell
+`http://127.0.0.1:8000/docs`
+
+### 3. Configure the Frontend
+
+Open a separate terminal and navigate to the frontend directory:
+
+```bash
+>>>>>>> b593f733e366b555779c56c9627e5816c5f2bd5f
 cd frontend
 npm install
 npm run dev
 ```
 
+<<<<<<< HEAD
 Open <http://127.0.0.1:5173>. Vite proxies `/api` to port 8000.
 
 ### AI modes
@@ -191,3 +229,86 @@ Build the frontend with `npm run build` and host `frontend/dist` on any static h
 - Valuation output is indicative and excludes title, zoning, and structural due diligence.
 - There is no authentication, database, or saved history in this MVP; all endpoints are
   stateless.
+=======
+Open the local URL displayed by your development server.
+
+*The commands above assume the project uses the standard Vite development setup and has separate `frontend` and `backend` directories.*
+
+## 📂 Suggested Project Structure
+
+```text
+construction-intelligence-platform/
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── App.jsx
+│   ├── package.json
+│   └── .env.example
+│
+├── backend/
+│   ├── main.py
+│   ├── routes/
+│   ├── services/
+│   ├── models/
+│   ├── utils/
+│   ├── requirements.txt
+│   └── .env.example
+│
+├── .gitignore
+└── README.md
+```
+
+This is a suggested structure; adapt it to the actual repository.
+
+## 🔄 Application Workflow
+
+1. The user selects a construction feature and submits text, images, or project information.
+2. The React.js frontend sends the request to the relevant FastAPI endpoint.
+3. The backend validates the input and prepares the request for AI processing.
+4. The multimodal AI model analyzes the supplied information.
+5. The backend validates and returns the response in the expected JSON format.
+6. The frontend displays the analysis, findings, and recommendations.
+
+## 🔐 Security and Reliability
+
+- Store credentials in environment variables.
+- Validate uploaded files and restrict acceptable file types and sizes.
+- Handle API failures, invalid inputs, and malformed AI responses.
+- Apply suitable authentication, authorization, and rate limiting when required.
+- Avoid presenting AI-generated structural assessments as certified engineering conclusions.
+
+## ⚠️ Limitations
+
+AI-generated outputs may be incomplete or inaccurate. Image-based crack analysis cannot independently establish structural integrity, and property valuations depend on the quality and availability of relevant data. Safety-critical findings must be verified by qualified professionals.
+
+## 🔮 Future Enhancements
+
+- Real-time construction progress monitoring
+- Project database and historical records
+- Construction dashboards and analytics
+- Automated inspection reports in PDF format
+- Weather API integration
+- Material cost estimation and budget tracking
+- Role-based access control
+- Predictive maintenance and risk analysis
+
+## 🤝 Contributing
+
+Contributions, feature suggestions, and bug reports are welcome. Fork the repository, create a feature branch, implement your changes, and submit a pull request.
+
+## 📄 License
+
+Choose and add an appropriate open-source license, such as the MIT License, if you intend to distribute the project under those terms.
+
+## 👨‍💻 Author
+
+Mayank Mitra
+GitHub: github.com/mayankmitra3000-hue
+
+---
+
+*Building smarter construction workflows through multimodal AI and modern full-stack engineering.*
+>>>>>>> b593f733e366b555779c56c9627e5816c5f2bd5f
