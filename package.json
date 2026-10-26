@@ -1,0 +1,13 @@
+{
+  "name": "python-pro",
+  "version": "1.0.0",
+  "description": "A full-stack decision-support workspace for construction teams. It reads site photos, daily logs, property attributes, and project briefs, then returns structured safety, defect, valuation, schedule, and knowledge outputs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
